@@ -1,32 +1,32 @@
 {
-	"name": "willsdapp",
-	"version": "0.1.0",
-	"private": true,
-	"scripts": {
-		"dev": "next dev",
-		"build": "next build",
-		"start": "next start",
-		"lint": "next lint",
-		"marketplace": "npx create-web3-dapp marketplace"
-	},
-	"dependencies": {
-		"@chakra-ui/react": "^2.6.1",
-		"@emotion/react": "^11.11.0",
-		"@emotion/styled": "^11.11.0",
-		"@fontsource/open-sans": "^4.5.14",
-		"@fontsource/parisienne": "^4.5.9",
-		"@fontsource/raleway": "^4.5.12",
-		"@next/font": "^13.4.2",
-		"@rainbow-me/rainbowkit": "^0.12.4",
-		"alchemy-sdk": "^2.6.2",
-		"framer-motion": "^10.12.10",
-		"next": "^13.1.2",
-		"react": "18.2.0",
-		"react-dom": "18.2.0",
-		"wagmi": "^0.12.6"
-	},
-	"devDependencies": {
-		"eslint": "8.36.0",
-		"eslint-config-next": "13.2.4"
-	}
+  "name": "willsdapp",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "marketplace": "npx create-web3-dapp marketplace"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^2.6.1",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/open-sans": "^4.5.14",
+    "@fontsource/parisienne": "^4.5.9",
+    "@fontsource/raleway": "^4.5.12",
+    "@next/font": "^13.4.2",
+    "@rainbow-me/rainbowkit": "^0.12.4",
+    "alchemy-sdk": "^2.6.2",
+    "framer-motion": "^10.12.10",
+    "next": "^13.1.2",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "wagmi": "^0.12.6"
+  },
+  "devDependencies": {
+    "eslint": "8.36.0",
+    "eslint-config-next": "13.2.4"
+  }
 }

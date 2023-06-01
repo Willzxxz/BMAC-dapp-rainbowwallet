@@ -1,12 +1,14 @@
 import abi from "../utils/BuyMeACoffee.json";
 import { ethers } from "ethers";
 import Head from "next/head";
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
-import { Box, Button, Link, Text } from "@chakra-ui/react";
+import { Box, Button, Center, Link, Text } from "@chakra-ui/react";
+import { useAccount } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
-export default function Home() {
+export default function BuyMeACoffee() {
+  const { isConnected } = useAccount();
   // Contract Address & ABI
   const contractAddress = "0xD6563FA7E41C643be7EF1D2558E2004d31A306bb";
   const contractABI = abi.abi;
@@ -172,72 +174,143 @@ export default function Home() {
         <Text fontSize="45px" mb="50px">
           Buy Will a Coffee!
         </Text>
-        {currentAccount ? (
-          <Box border="2px" py="20px" px="40px" borderRadius="12px">
-            <form>
-              <div>
-                <label>Name</label>
-                <br />
-                <Box border="1px" py="3px" px="4px" borderRadius="5px">
-                  <input
-                    width="100%"
-                    id="name"
-                    type="text"
-                    placeholder="anon"
-                    onChange={onNameChange}
-                  />
-                </Box>
-              </div>
+        {/* {currentAccount ? ( */}
+        <Box border="2px" py="20px" px="40px" borderRadius="12px">
+          <form>
+            <div>
+              <label>Name</label>
               <br />
-              <div>
-                <label>Send Will a message</label>
-                <br />
-                <Box border="1px" py="3px" px="4px" borderRadius="5px">
-                  <textarea
-                    rows={3}
-                    placeholder="Enjoy your coffee!"
-                    id="message"
-                    onChange={onMessageChange}
-                    required
-                  ></textarea>
-                </Box>
-              </div>
+              <Box border="1px" py="3px" px="4px" borderRadius="5px">
+                <input
+                  width="100%"
+                  id="name"
+                  type="text"
+                  placeholder="anon"
+                  onChange={onNameChange}
+                />
+              </Box>
+            </div>
+            <br />
+            <div>
+              <label>Send Will a message</label>
               <br />
-              <div>
-                <Button
-                  bgColor="#3574F4"
-                  color="white"
-                  _hover={{ transform: "scale(1.03)" }}
-                  borderRadius="12px"
-                  onClick={buyCoffee}
-                >
-                  Send 1 Coffee for 0.001ETH
-                </Button>
-              </div>
-            </form>
-          </Box>
-        ) : (
-          <Button
-            bgColor="#3574F4"
-            color="white"
-            _hover={{ transform: "scale(1.03)" }}
-            borderRadius="12px"
-            onClick={connectWallet}
-          >
-            Connect your Wallet
-          </Button>
-        )}
+              <Box border="1px" py="3px" px="4px" borderRadius="5px">
+                <textarea
+                  rows={3}
+                  placeholder="Enjoy your coffee!"
+                  id="message"
+                  onChange={onMessageChange}
+                  required
+                ></textarea>
+              </Box>
+            </div>
+            <br />
+            <div>
+              {isConnected ? (
+                <Center>
+                  <Button
+                    bgColor="#3574F4"
+                    color="white"
+                    _hover={{ transform: "scale(1.03)" }}
+                    borderRadius="12px"
+                    onClick={buyCoffee}
+                  >
+                    Send 1 Coffee for 0.001ETH
+                  </Button>
+                </Center>
+              ) : (
+                <Center>
+                  <ConnectButton.Custom>
+                    {({
+                      account,
+                      chain,
+                      openAccountModal,
+                      openChainModal,
+                      openConnectModal,
+                      authenticationStatus,
+                      mounted,
+                    }) => {
+                      // Note: If your app doesn't use authentication, you
+                      // can remove all 'authenticationStatus' checks
+                      const ready =
+                        mounted && authenticationStatus !== "loading";
+                      const connected =
+                        ready &&
+                        account &&
+                        chain &&
+                        (!authenticationStatus ||
+                          authenticationStatus === "authenticated");
+
+                      function someFunc() {
+                        openConnectModal(), connectWallet();
+                      }
+
+                      return (
+                        <div
+                          {...(!ready && {
+                            "aria-hidden": true,
+                            style: {
+                              opacity: 0,
+                              pointerEvents: "none",
+                              userSelect: "none",
+                            },
+                          })}
+                        >
+                          {(() => {
+                            if (!connected) {
+                              return (
+                                <Center>
+                                  <Button
+                                    bgColor="#3574F4"
+                                    color="white"
+                                    _hover={{ transform: "scale(1.03)" }}
+                                    borderRadius="12px"
+                                    onClick={someFunc}
+                                    // onClick={openConnectModal; connectWallet}
+                                  >
+                                    Connect your Wallet
+                                  </Button>
+                                </Center>
+                              );
+                            }
+
+                            if (chain.unsupported) {
+                              return (
+                                <button onClick={openChainModal} type="button">
+                                  Wrong network
+                                </button>
+                              );
+                            }
+
+                            return (
+                              <div style={{ display: "flex", gap: 12 }}></div>
+                            );
+                          })()}
+                        </div>
+                      );
+                    }}
+                  </ConnectButton.Custom>
+                </Center>
+              )}
+            </div>
+          </form>
+        </Box>
       </main>
+      <Center>
+        <Button
+          bgColor="black"
+          color="white"
+          _hover={{ transform: "scale(1.03)" }}
+          borderRadius="12px"
+          onClick={connectWallet}
+          mb="20px"
+        >
+          Open Messages
+        </Button>
+      </Center>
 
       {currentAccount && (
-        <Box
-          border="2px"
-          py="20px"
-          px="40px"
-          borderRadius="12px"
-          boxSize="60%"
-          margin="auto"
-        >
+        <Box border="2px" py="20px" px="40px" borderRadius="12px" margin="auto">
           {currentAccount && <h1>Memos received</h1>}
 
           {currentAccount &&
@@ -263,12 +336,7 @@ export default function Home() {
       )}
       <br />
 
-      <Box
-        flex
-        width="100%"
-        p=" .8rem 4rem 0.8rem 4rem"
-        gap="2rem"
-      >
+      <Box flex width="100%" p=" .8rem 4rem 0.8rem 4rem" gap="2rem">
         <footer className={styles.footer}>
           <a
             href="https://www.linkedin.com/in/guilherme-de-deus/"

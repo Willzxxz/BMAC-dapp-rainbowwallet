@@ -5,8 +5,12 @@ import { Box } from "@chakra-ui/react";
 export default function Navbar() {
   return (
     <nav className={styles.navbar}>
-      <Box fontFamily="Parisienne" fontSize='30px'>Will</Box>
-      <ConnectButton></ConnectButton>
+      <Box fontFamily="Parisienne" fontSize="30px">
+        Will
+      </Box>
+      <Box>
+        <ConnectButton></ConnectButton>
+      </Box>
     </nav>
   );
 }
