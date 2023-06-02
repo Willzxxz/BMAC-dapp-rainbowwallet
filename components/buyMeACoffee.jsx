@@ -3,18 +3,16 @@ import { ethers } from "ethers";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
-import { Box, Button, Center, Link, Text } from "@chakra-ui/react";
-import { useAccount } from "wagmi";
+import { Box, Button, Center, HStack, Link, Text } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import ConnectCustomButton from "./connectButtonCustom";
 
 export default function BuyMeACoffee() {
-  const { isConnected } = useAccount();
   // Contract Address & ABI
   const contractAddress = "0xD6563FA7E41C643be7EF1D2558E2004d31A306bb";
   const contractABI = abi.abi;
 
   // Component state
-  const [currentAccount, setCurrentAccount] = useState("");
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [memos, setMemos] = useState([]);
@@ -25,43 +23,6 @@ export default function BuyMeACoffee() {
 
   const onMessageChange = (event) => {
     setMessage(event.target.value);
-  };
-
-  // Wallet connection logic
-  const isWalletConnected = async () => {
-    try {
-      const { ethereum } = window;
-
-      const accounts = await ethereum.request({ method: "eth_accounts" });
-      console.log("accounts: ", accounts);
-
-      if (accounts.length > 0) {
-        const account = accounts[0];
-        console.log("wallet is connected! " + account);
-      } else {
-        console.log("make sure MetaMask is connected");
-      }
-    } catch (error) {
-      console.log("error: ", error);
-    }
-  };
-
-  const connectWallet = async () => {
-    try {
-      const { ethereum } = window;
-
-      if (!ethereum) {
-        console.log("please install MetaMask");
-      }
-
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-
-      setCurrentAccount(accounts[0]);
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const buyCoffee = async () => {
@@ -99,6 +60,16 @@ export default function BuyMeACoffee() {
     }
   };
 
+  const options = {
+    // hour12: "false",
+    hour: "numeric",
+    minute: "2-digit",
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
   // Function to fetch all memos stored on-chain.
   const getMemos = async () => {
     try {
@@ -126,11 +97,11 @@ export default function BuyMeACoffee() {
 
   useEffect(() => {
     let buyMeACoffee;
-    isWalletConnected();
     getMemos();
 
     // Create an event handler function for when someone sends
     // us a new memo.
+
     const onNewMemo = (from, timestamp, name, message) => {
       console.log("Memo received: ", from, timestamp, name, message);
       setMemos((prevState) => [
@@ -167,186 +138,156 @@ export default function BuyMeACoffee() {
       <Head>
         <title>Buy Will a Coffee!</title>
         <meta name="description" content="Tipping site" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" />  */}
       </Head>
 
       <main className={styles.main}>
         <Text fontSize="45px" mb="50px">
           Buy Will a Coffee!
         </Text>
-        {/* {currentAccount ? ( */}
         <Box border="2px" py="20px" px="40px" borderRadius="12px">
           <form>
-            <div>
-              <label>Name</label>
-              <br />
-              <Box border="1px" py="3px" px="4px" borderRadius="5px">
-                <input
-                  width="100%"
-                  id="name"
-                  type="text"
-                  placeholder="anon"
-                  onChange={onNameChange}
-                />
-              </Box>
-            </div>
+            <label>Name</label>
             <br />
-            <div>
-              <label>Send Will a message</label>
-              <br />
-              <Box border="1px" py="3px" px="4px" borderRadius="5px">
-                <textarea
-                  rows={3}
-                  placeholder="Enjoy your coffee!"
-                  id="message"
-                  onChange={onMessageChange}
-                  required
-                ></textarea>
-              </Box>
-            </div>
+            <Box border="1px" py="3px" px="4px" borderRadius="5px">
+              <input
+                width="100%"
+                id="name"
+                type="text"
+                placeholder="anon"
+                onChange={onNameChange}
+              />
+            </Box>
             <br />
-            <div>
-              {isConnected ? (
-                <Center>
-                  <Button
-                    bgColor="#3574F4"
-                    color="white"
-                    _hover={{ transform: "scale(1.03)" }}
-                    borderRadius="12px"
-                    onClick={buyCoffee}
-                  >
-                    Send 1 Coffee for 0.001ETH
-                  </Button>
-                </Center>
-              ) : (
-                <Center>
-                  <ConnectButton.Custom>
-                    {({
-                      account,
-                      chain,
-                      openAccountModal,
-                      openChainModal,
-                      openConnectModal,
-                      authenticationStatus,
-                      mounted,
-                    }) => {
-                      // Note: If your app doesn't use authentication, you
-                      // can remove all 'authenticationStatus' checks
-                      const ready =
-                        mounted && authenticationStatus !== "loading";
-                      const connected =
-                        ready &&
-                        account &&
-                        chain &&
-                        (!authenticationStatus ||
-                          authenticationStatus === "authenticated");
+            <label>Send Will a message</label>
+            <br />
+            <Box border="1px" py="3px" px="4px" borderRadius="5px">
+              <textarea
+                rows={4}
+                placeholder="Enjoy your coffee!"
+                id="message"
+                onChange={onMessageChange}
+                required
+              ></textarea>
+            </Box>
+            <br />
+            <ConnectButton.Custom>
+              {({ account, chain, authenticationStatus, mounted }) => {
+                const ready = mounted && authenticationStatus !== "loading";
+                const connected =
+                  ready &&
+                  account &&
+                  chain &&
+                  (!authenticationStatus ||
+                    authenticationStatus === "authenticated");
 
-                      function someFunc() {
-                        openConnectModal(), connectWallet();
+                return (
+                  <div>
+                    {(() => {
+                      if (connected) {
+                        return (
+                          <Center>
+                            <Button
+                              bgColor="#3574F4"
+                              color="white"
+                              _hover={{ transform: "scale(1.03)" }}
+                              borderRadius="12px"
+                              onClick={buyCoffee}
+                            >
+                              Send 1 Coffee for 0.001ETH
+                            </Button>
+                          </Center>
+                        );
+                      } else {
+                        return (
+                          <Center>
+                            <ConnectCustomButton />
+                          </Center>
+                        );
                       }
 
-                      return (
-                        <div
-                          {...(!ready && {
-                            "aria-hidden": true,
-                            style: {
-                              opacity: 0,
-                              pointerEvents: "none",
-                              userSelect: "none",
-                            },
-                          })}
-                        >
-                          {(() => {
-                            if (!connected) {
-                              return (
-                                <Center>
-                                  <Button
-                                    bgColor="#3574F4"
-                                    color="white"
-                                    _hover={{ transform: "scale(1.03)" }}
-                                    borderRadius="12px"
-                                    onClick={someFunc}
-                                    // onClick={openConnectModal; connectWallet}
-                                  >
-                                    Connect your Wallet
-                                  </Button>
-                                </Center>
-                              );
-                            }
-
-                            if (chain.unsupported) {
-                              return (
-                                <button onClick={openChainModal} type="button">
-                                  Wrong network
-                                </button>
-                              );
-                            }
-
-                            return (
-                              <div style={{ display: "flex", gap: 12 }}></div>
-                            );
-                          })()}
-                        </div>
-                      );
-                    }}
-                  </ConnectButton.Custom>
-                </Center>
-              )}
-            </div>
+                      // return <></>;
+                    })()}
+                  </div>
+                );
+              }}
+            </ConnectButton.Custom>
           </form>
         </Box>
       </main>
-      <Center>
-        <Button
-          bgColor="black"
-          color="white"
-          _hover={{ transform: "scale(1.03)" }}
-          borderRadius="12px"
-          onClick={connectWallet}
-          mb="20px"
-        >
-          Open Messages
-        </Button>
-      </Center>
+      <ConnectButton.Custom>
+        {({ account, chain, authenticationStatus, mounted }) => {
+          const ready = mounted && authenticationStatus !== "loading";
+          const connected =
+            ready &&
+            account &&
+            chain &&
+            (!authenticationStatus || authenticationStatus === "authenticated");
 
-      {currentAccount && (
-        <Box border="2px" py="20px" px="40px" borderRadius="12px" margin="auto">
-          {currentAccount && <h1>Memos received</h1>}
+          return (
+            <div>
+              {(() => {
+                if (connected) {
+                  return (
+                    <Center>
+                      <Box
+                        border="2px"
+                        w="650px"
+                        py="20px"
+                        px="40px"
+                        borderRadius="12px"
+                        margin="auto"
+                      >
+                        <Center>
+                          <Text mb="20px" fontSize="20px">
+                            <b>Memos received</b>
+                          </Text>
+                        </Center>
 
-          {currentAccount &&
-            memos.map((memo, idx) => {
-              return (
-                <div
-                  key={idx}
-                  style={{
-                    border: "2px solid",
-                    borderRadius: "5px",
-                    padding: "5px",
-                    margin: "5px",
-                  }}
-                >
-                  <p style={{ fontWeight: "bold" }}>"{memo.message}"</p>
-                  <p>
-                    From: {memo.name} at {memo.timestamp.toString()}
-                  </p>
-                </div>
-              );
-            })}
-        </Box>
-      )}
+                        {memos
+                          .slice(0)
+                          .reverse()
+                          .map((memo, idx) => {
+                            const timestamp = new Date(memo.timestamp * 1000);
+
+                            return (
+                              <div
+                                key={idx}
+                                style={{
+                                  border: "2px solid",
+                                  borderRadius: "5px",
+                                  padding: "5px",
+                                  margin: "5px",
+                                }}
+                              >
+                                <p style={{ fontWeight: "bold" }}>
+                                  "{memo.message}"
+                                </p>
+                                <HStack justifyContent="space-between">
+                                  <Box>From: {memo.name} </Box>
+                                  <Box>
+                                    {timestamp.toLocaleDateString(
+                                      "en-US",
+                                      options
+                                    )}
+                                  </Box>
+                                </HStack>
+                              </div>
+                            );
+                          })}
+                      </Box>
+                    </Center>
+                  );
+                }
+
+                // return <></>;
+              })()}
+            </div>
+          );
+        }}
+      </ConnectButton.Custom>
+
       <br />
-
-      <Box flex width="100%" p=" .8rem 4rem 0.8rem 4rem" gap="2rem">
-        <footer className={styles.footer}>
-          <a
-            href="https://www.linkedin.com/in/guilherme-de-deus/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            All Rights Reserved (c) Will de Deus 2023
-          </a>
-        </footer>
-      </Box>
     </div>
   );
 }
