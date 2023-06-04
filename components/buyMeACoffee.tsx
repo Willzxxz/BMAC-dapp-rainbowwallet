@@ -17,7 +17,6 @@ import {
 } from "@chakra-ui/react";
 import ConnectCustomButton from "./connectButtonCustom";
 import { useAccount } from "wagmi";
-import BmacForm from "./bmac-form";
 
 export default function BuyMeACoffee() {
   // Contract Address & ABI
