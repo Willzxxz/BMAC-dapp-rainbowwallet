@@ -16,9 +16,8 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import ConnectCustomButton from "./connectButtonCustom";
-// import MemosBox from "./memosBox";
 import { useAccount } from "wagmi";
-// import BmacForm from "./bmac-form";
+import BmacForm from "./bmac-form";
 
 export default function BuyMeACoffee() {
   // Contract Address & ABI
@@ -250,11 +249,9 @@ export default function BuyMeACoffee() {
           </FormControl>
         </Box>
       </Box>
-      {/* <BmacForm /> */}
 
       {isMagic && (
         <Center>
-          {/* <MemosBox></MemosBox> */}
           <Box
             border="2px"
             w="50rem"
