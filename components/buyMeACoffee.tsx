@@ -18,7 +18,7 @@ import {
 import ConnectCustomButton from "./connectButtonCustom";
 // import MemosBox from "./memosBox";
 import { useAccount } from "wagmi";
-import BmacForm from "./bmac-form";
+// import BmacForm from "./bmac-form";
 
 export default function BuyMeACoffee() {
   // Contract Address & ABI
