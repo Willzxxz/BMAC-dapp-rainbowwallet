@@ -43,7 +43,7 @@ export default function ConnectCustomButton() {
                 return (
                   <Center>
                     <Button
-                      bgColor="#3574F4"
+                      bgColor="#0E76FD"
                       color="white"
                       _hover={{ transform: "scale(1.03)" }}
                       borderRadius="12px"

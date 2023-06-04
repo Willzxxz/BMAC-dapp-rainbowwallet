@@ -3,7 +3,7 @@ import styles from "../styles/Home.module.css";
 
 export default function Footer() {
   return (
-    <Box flex width="100%" p=" .8rem 4rem 0.8rem 4rem" gap="2rem">
+    <Box width="100%" p="0.8rem 4rem 0.8rem 4rem" gap="2rem" marginTop="2%">
       <footer className={styles.footer}>
         <a
           href="https://www.linkedin.com/in/guilherme-de-deus/"

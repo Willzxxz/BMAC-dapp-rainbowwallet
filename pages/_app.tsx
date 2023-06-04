@@ -2,10 +2,8 @@ import "../styles/globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
 import * as React from "react";
 import { Box, ChakraProvider } from "@chakra-ui/react";
-import { Parisienne } from "@next/font/google";
-
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { configureChains, createClient, WagmiConfig } from "wagmi";
+import { createClient, configureChains, WagmiConfig } from "wagmi";
 import {
   mainnet,
   polygon,
@@ -16,11 +14,13 @@ import {
   optimismGoerli,
   arbitrumGoerli,
 } from "wagmi/chains";
-import { alchemyProvider } from "wagmi/providers/alchemy";
+// import { SessionProvider } from "next-auth/react";
+// import { Session } from "next-auth";
+import { AppProps } from "next/app";
 import { publicProvider } from "wagmi/providers/public";
 import MainLayout from "../layout/mainLayout";
 
-const { chains, provider } = configureChains(
+const { chains, webSocketProvider, provider } = configureChains(
   [
     mainnet,
     goerli,
@@ -31,7 +31,8 @@ const { chains, provider } = configureChains(
     arbitrum,
     arbitrumGoerli,
   ],
-  [publicProvider({ apiKey: process.env.ALCHEMY_API_KEY }), publicProvider()]
+  // [publicProvider({ apiKey: process.env.ALCHEMY_API_KEY }), publicProvider()]
+  [publicProvider()]
 );
 
 const { connectors } = getDefaultWallets({
@@ -41,27 +42,24 @@ const { connectors } = getDefaultWallets({
 
 const wagmiClient = createClient({
   autoConnect: true,
-  connectors,
+  webSocketProvider,
   provider,
+  connectors,
 });
 
-export { WagmiConfig, RainbowKitProvider };
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider
-        modalSize="wide"
-        initialChain={process.env.NEXT_PUBLIC_DEFAULT_CHAIN}
-        chains={chains}
-      >
-        <MainLayout>
-          <ChakraProvider>
-            <Component {...pageProps} />
-          </ChakraProvider>
-        </MainLayout>
-      </RainbowKitProvider>
-    </WagmiConfig>
+    <Box>
+      <WagmiConfig client={wagmiClient}>
+        <RainbowKitProvider chains={chains}>
+          <MainLayout>
+            <ChakraProvider>
+              <Component {...pageProps} />
+            </ChakraProvider>
+          </MainLayout>
+        </RainbowKitProvider>
+      </WagmiConfig>
+    </Box>
   );
 }
-
 export default MyApp;
